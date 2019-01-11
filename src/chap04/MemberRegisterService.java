@@ -1,0 +1,38 @@
+package chap04;
+
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class MemberRegisterService {
+	
+	@Autowired(required=false) // main4.jsva
+	private MemberDao memberDao;
+	
+	@Autowired(required=false)
+	public MemberRegisterService(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+	
+	
+	
+	
+	public MemberRegisterService() {} // default »ý¼ºÀÚ
+	
+	@Autowired(required=false)
+	public void setMemberDao(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	} //appctx3.xml
+	
+	
+	
+	public void regist(RegisterRequest req) {
+		Member member = memberDao.selectByEmail(req.getEmail());
+		if (member != null) {
+			throw new AlreadyExistingMemberException("dup email" + req.getEmail());
+		}
+		Member newMember = new Member(req.getEmail(), req.getPassword(), req.getName(), new Date());
+		memberDao.insert(newMember);
+	}
+
+}
